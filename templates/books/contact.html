@@ -1,0 +1,102 @@
+{% extends 'books/base.html' %}
+{% load static %}
+
+{% block title %}Contact Us | Pustakam{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'books/css/auth.css' %}">
+<style>
+    /* Custom overrides for Contact page specific elements */
+    .contact-info-item {
+        margin-bottom: 2rem;
+        background: rgba(255, 255, 255, 0.1);
+        padding: 1rem;
+        border-radius: 12px;
+        backdrop-filter: blur(5px);
+    }
+
+    .contact-info-item i {
+        font-size: 1.2rem;
+        margin-bottom: 0.5rem;
+        display: block;
+        color: var(--accent-color);
+    }
+
+    .contact-info-item h4 {
+        margin-bottom: 0.25rem;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        opacity: 0.8;
+    }
+
+    .contact-info-item p {
+        margin: 0;
+        font-weight: 600;
+        font-size: 1.1rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+    <div class="auth-split-wrapper">
+        <!-- Left Side: Contact Form -->
+        <div class="auth-left animate-fade-up">
+            <h2>Get in Touch</h2>
+            <p class="auth-subtitle">We'd love to hear from you. Send us a message!</p>
+
+            <form method="post">
+                {% csrf_token %}
+
+                <div class="form-group input-with-icon">
+                    <input type="text" name="name" placeholder="Your Name" required>
+                    <i class="fas fa-user"></i>
+                </div>
+
+                <div class="form-group input-with-icon">
+                    <input type="email" name="email" placeholder="Your Email" required>
+                    <i class="fas fa-envelope"></i>
+                </div>
+
+                <div class="form-group input-with-icon">
+                    <input type="text" name="subject" placeholder="Subject" required>
+                    <i class="fas fa-tag"></i>
+                </div>
+
+                <div class="form-group">
+                    <textarea name="message" class="form-control" rows="4" placeholder="How can we help you?" required
+                        style="width: 100%; border: none; background: #f1f5f9; border-radius: 12px; padding: 1rem; font-family: inherit; font-size: 0.95rem; resize: none;"></textarea>
+                </div>
+
+                <button type="submit" class="btn-auth">Send Message</button>
+            </form>
+        </div>
+
+        <!-- Right Side: Contact Info (Image BG) -->
+        <div class="auth-right">
+            <div class="auth-right-content text-start" style="width: 100%;">
+                <h1 class="mb-4">Contact Info</h1>
+
+                <div class="contact-info-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <h4>Visit Us</h4>
+                    <p>BVC Engineering college, Odalarevu</p>
+                </div>
+
+                <div class="contact-info-item">
+                    <i class="fas fa-phone"></i>
+                    <h4>Call Us</h4>
+                    <p>+91 63051 79697</p>
+                </div>
+
+                <div class="contact-info-item">
+                    <i class="fas fa-envelope"></i>
+                    <h4>Email Us</h4>
+                    <p>support@pustakam.com</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

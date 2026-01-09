@@ -1,0 +1,101 @@
+{% extends 'books/base.html' %}
+{% load static %}
+
+{% block title %}Shopping Cart | Pustakam{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'books/css/cart.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container section-padding">
+
+    {% if cart and cart.items.exists %}
+    <div class="cart-checkout-container">
+        <div class="page-header animate-fade-up">
+            <h1>Your Cart <span class="text-muted" style="font-size: 1.2rem; font-weight: 400;">({{ cart.items.count }}
+                    items)</span></h1>
+        </div>
+
+        <div class="cart-grid">
+            <!-- Left: Cart Items -->
+            <div class="cart-items-card">
+                {% for item in cart.items.all %}
+                <div class="cart-item">
+                    <!-- Image -->
+                    <a href="{% url 'book_detail' item.book.pk %}">
+                        {% if item.book.image %}
+                        <img src="{{ item.book.image.url }}" alt="{{ item.book.title }}" class="cart-thumb">
+                        {% else %}
+                        <div class="cart-thumb-placeholder">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        {% endif %}
+                    </a>
+
+                    <!-- Details -->
+                    <div class="cart-item-details">
+                        <a href="{% url 'book_detail' item.book.pk %}" class="cart-item-title">{{ item.book.title }}</a>
+                        <span class="cart-item-author">by {{ item.book.author }}</span>
+                        <div class="cart-item-price">₹{{ item.book.price }}</div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="cart-item-actions">
+                        <a href="{% url 'remove_from_cart' item.id %}" class="remove-btn" title="Remove Item">
+                            <i class="fas fa-trash-alt"></i> Remove
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Right: Order Summary -->
+            <div class="summary-card animate-fade-up" style="animation-delay: 0.1s;">
+                <h3 class="summary-header">Order Summary</h3>
+
+                <div class="summary-row">
+                    <span>Subtotal</span>
+                    <span>₹{{ cart.total_price }}</span>
+                </div>
+                <div class="summary-row">
+                    <span>Shipping</span>
+                    <span class="text-success">Free</span>
+                </div>
+                <div class="summary-row">
+                    <span>Taxes</span>
+                    <span>Calculated at checkout</span>
+                </div>
+
+                <div class="summary-row total">
+                    <span>Total</span>
+                    <span>₹{{ cart.total_price }}</span>
+                </div>
+
+                <a href="{% url 'checkout' %}" class="btn btn-primary btn-checkout">
+                    Proceed to Checkout <i class="fas fa-arrow-right"></i>
+                </a>
+
+                <div class="text-center mt-3">
+                    <a href="{% url 'home' %}" class="small text-muted" style="text-decoration: underline;">Continue
+                        Shopping</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <!-- Empty State -->
+    <div class="empty-cart-container animate-fade-up">
+        <div class="mb-4">
+            <i class="fas fa-shopping-basket" style="font-size: 5rem; color: #e2e8f0;"></i>
+        </div>
+        <h2 class="mb-3 display-4" style="font-size: 2rem;">Your cart is empty</h2>
+        <p class="text-muted mb-5">Looks like you haven't added any books yet.</p>
+        <a href="{% url 'home' %}" class="btn btn-primary btn-lg">
+            <i class="fas fa-search me-2"></i> Browse Books
+        </a>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

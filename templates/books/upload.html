@@ -1,0 +1,207 @@
+{% extends 'books/base.html' %}
+{% load static %}
+
+{% block title %}Sell a Book | Pustakam{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'books/css/auth.css' %}">
+<style>
+    /* Custom overrides for Upload page */
+    .tip-card {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 1rem;
+        border-radius: 12px;
+        backdrop-filter: blur(5px);
+        margin-bottom: 1rem;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transition: transform 0.3s;
+    }
+
+    .tip-card:hover {
+        transform: translateX(5px);
+        background: rgba(255, 255, 255, 0.15);
+    }
+
+    .tip-card h4 {
+        margin: 0 0 0.25rem 0;
+        font-size: 1rem;
+        color: var(--accent-color);
+    }
+
+    .tip-card p {
+        margin: 0;
+        font-size: 0.85rem;
+        opacity: 0.9;
+    }
+
+    .tip-icon {
+        float: right;
+        font-size: 1.5rem;
+        color: rgba(255, 255, 255, 0.5);
+    }
+
+    /* Form specifics */
+    .form-group label {
+        display: block;
+        margin-bottom: 0.3rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    select.form-control {
+        appearance: none;
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+        background-size: 1em;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+    <div class="auth-split-wrapper">
+        <!-- Left Side: Upload Form -->
+        <div class="auth-left animate-fade-up">
+            <h2>Sell Your Book</h2>
+            <p class="auth-subtitle">Turn pages into profit. List in seconds.</p>
+
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                <div class="alert alert-error mb-3 small">
+                    {{ form.non_field_errors }}
+                </div>
+                {% endif %}
+
+                <div class="d-flex" style="gap: 1rem;">
+                    <div class="form-group" style="flex: 2;">
+                        <label>Book Title</label>
+                        <div class="input-with-icon">
+                            {{ form.title }}
+                            <i class="fas fa-heading"></i>
+                        </div>
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label>Language</label>
+                        <!-- Assuming language field exists or just grouping title better? layout wise grid is better -->
+                    </div>
+                </div>
+
+                <!-- Re-doing layout for proper form mapping -->
+                <div class="form-group">
+                    <label>Book Title</label>
+                    <div class="input-with-icon">
+                        <input type="text" name="title" required id="id_title" value="{{ form.title.value|default:'' }}"
+                            placeholder="e.g. The Alchemist">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    {{ form.title.errors }}
+                </div>
+
+                <div class="d-flex" style="gap: 1rem;">
+                    <div class="form-group" style="flex: 1;">
+                        <label>Author</label>
+                        <div class="input-with-icon">
+                            <input type="text" name="author" required id="id_author"
+                                value="{{ form.author.value|default:'' }}" placeholder="Author Name">
+                            <i class="fas fa-user-edit"></i>
+                        </div>
+                        {{ form.author.errors }}
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label>Expected Price (₹)</label>
+                        <div class="input-with-icon">
+                            <input type="number" name="price" required id="id_price"
+                                value="{{ form.price.value|default:'' }}" placeholder="Price">
+                            <i class="fas fa-rupee-sign"></i>
+                        </div>
+                        {{ form.price.errors }}
+                    </div>
+                </div>
+
+                <div class="d-flex" style="gap: 1rem;">
+                    <div class="form-group" style="flex: 1;">
+                        <label>Category</label>
+                        <div class="input-with-icon">
+                            <!-- We need to render the Widget manually or just use form field class -->
+                            {{ form.category }}
+                            <!-- Note: Select widgets in auth.css might need styling check, but generic input-with-icon works if we style select -->
+                            <i class="fas fa-list"></i>
+                        </div>
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label>Condition</label>
+                        <div class="input-with-icon">
+                            {{ form.condition }}
+                            <i class="fas fa-star-half-alt"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea name="description" rows="3" class="form-control"
+                        style="width: 100%; border: 2px solid #f1f5f9; border-radius: 12px; padding: 1rem; background: #f8fafc;"
+                        placeholder="Describe the book's condition...">{{ form.description.value|default:'' }}</textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Book Cover Image</label>
+                    <div class="input-with-icon">
+                        <input type="file" name="image" accept="image/*" id="id_image" class="form-control"
+                            style="padding-top: 0.6rem; padding-left: 2.5rem;">
+                        <i class="fas fa-image" style="top: 12px;"></i>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-auth">Publish Listing</button>
+            </form>
+        </div>
+
+        <!-- Right Side: Tips & Visual -->
+        <div class="auth-right">
+            <div class="auth-right-content text-start" style="width: 100%;">
+                <h1 class="mb-5">Seller's Guide</h1>
+
+                <div class="tip-card">
+                    <i class="fas fa-camera tip-icon"></i>
+                    <h4>Snap It</h4>
+                    <p>Take clear, bright photos. The cover is your first impression.</p>
+                </div>
+
+                <div class="tip-card">
+                    <i class="fas fa-tag tip-icon"></i>
+                    <h4>Price It</h4>
+                    <p>Check similar books. Fair prices sell much faster.</p>
+                </div>
+
+                <div class="tip-card">
+                    <i class="fas fa-box-open tip-icon"></i>
+                    <h4>Ship It</h4>
+                    <p>Pack securely when you get an order. Happy readers leave 5 stars.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Helper to add classes to Django rendered select widgets if needed
+    document.addEventListener('DOMContentLoaded', function () {
+        const selects = document.querySelectorAll('select');
+        selects.forEach(s => {
+            s.style.width = '100%';
+            s.style.border = 'none';
+            s.style.backgroundColor = 'transparent';
+            s.style.padding = '0.8rem 0.8rem 0.8rem 2.5rem';
+            s.style.outline = 'none';
+            s.style.appearance = 'none';
+        });
+    });
+</script>
+{% endblock %}

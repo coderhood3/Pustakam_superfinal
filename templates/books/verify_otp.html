@@ -1,0 +1,51 @@
+{% extends 'books/base.html' %}
+{% load static %}
+
+{% block title %}Verify OTP | Pustakam{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'books/css/auth.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+    <div class="auth-split-wrapper">
+        <!-- Left Side: Form -->
+        <div class="auth-left animate-fade-up">
+            <h2>Verify Account</h2>
+            <p class="auth-subtitle">Enter the 6-digit code sent to your email.</p>
+
+            <form method="post">
+                {% csrf_token %}
+                {% if messages %}
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} mb-3 small">
+                    {{ message }}
+                </div>
+                {% endfor %}
+                {% endif %}
+
+                <div class="form-group input-with-icon">
+                    <input type="text" name="otp" placeholder="Enter 6-digit OTP" maxlength="6" required autofocus
+                        pattern="[0-9]{6}" title="6-digit code">
+                    <i class="fas fa-key"></i>
+                </div>
+
+                <button type="submit" class="btn-auth">Verify & Login</button>
+            </form>
+
+            <div class="auth-footer">
+                Did not receive the code? <a href="{% url 'register' %}">Resend</a>
+            </div>
+        </div>
+
+        <!-- Right Side: Image -->
+        <div class="auth-right">
+            <div class="auth-right-content">
+                <h1>PUSTAKAM</h1>
+                <p>Secure your account to start buying and selling books safely in our community.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
