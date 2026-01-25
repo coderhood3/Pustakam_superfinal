@@ -1,0 +1,127 @@
+{% extends 'books/base.html' %}
+{% load static %}
+
+{% block title %}Checkout | Pustakam{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'books/css/cart.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container section-padding">
+
+    <div class="cart-checkout-container">
+        <div class="page-header animate-fade-up">
+            <h1>Secure Checkout</h1>
+        </div>
+
+        <form method="post" class="checkout-grid">
+            {% csrf_token %}
+
+            <!-- Left: Checkout Form -->
+            <div class="checkout-form-card animate-fade-up">
+
+                <div class="mb-5">
+                    <h3 class="form-section-title"><i class="fas fa-shipping-fast"></i> Shipping Details</h3>
+                    <div class="form-group mb-4">
+                        <label for="full_name" class="form-label fw-bold small text-muted">Full Name</label>
+                        <input type="text" name="full_name" id="full_name" required value="{{ user.get_full_name }}"
+                            class="form-control form-input" placeholder="Enter your full name">
+                    </div>
+                    <div class="form-group">
+                        <label for="address" class="form-label fw-bold small text-muted">Delivery Address</label>
+                        <textarea name="address" id="address" rows="3" required class="form-control form-input"
+                            placeholder="Street address, City, State, Zip Code"></textarea>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="form-section-title"><i class="fas fa-credit-card"></i> Payment Method</h3>
+
+                    <label class="payment-option-card selected">
+                        <input type="radio" name="payment_method" value="cod" checked>
+                        <i class="fas fa-hand-holding-usd fa-lg text-success"></i>
+                        <div>
+                            <span class="d-block fw-bold">Cash on Delivery</span>
+                            <span class="small text-muted">Pay securely when you receive your books.</span>
+                        </div>
+                    </label>
+
+                    <label class="payment-option-card">
+                        <input type="radio" name="payment_method" value="online" disabled>
+                        <i class="fas fa-lock fa-lg text-muted"></i>
+                        <div style="opacity: 0.6;">
+                            <span class="d-block fw-bold">Online Payment (Coming Soon)</span>
+                            <span class="small text-muted">Credit Card / UPI / NetBanking</span>
+                        </div>
+                    </label>
+                </div>
+
+            </div>
+
+            <!-- Right: Order Summary (Reused Style) -->
+            <div class="summary-card animate-fade-up" style="animation-delay: 0.1s;">
+                <h3 class="summary-header">Your Order</h3>
+
+                <div class="mb-4">
+                    {% for item in cart.items.all|slice:":3" %}
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        {% if item.book.image %}
+                        <img src="{{ item.book.image.url }}" alt="img"
+                            style="width: 40px; height: 60px; object-fit: cover; border-radius: 4px;">
+                        {% else %}
+                        <div style="width: 40px; height: 60px; background: #e2e8f0; border-radius: 4px;"></div>
+                        {% endif %}
+                        <div class="flex-grow-1">
+                            <h4 style="font-size: 0.9rem; margin: 0; color: var(--text-color);">{{
+                                item.book.title|truncatechars:25 }}</h4>
+                            <span class="small text-muted">₹{{ item.book.price }}</span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    {% if cart.items.count > 3 %}
+                    <div class="text-center small text-muted">
+                        + {{ cart.items.count|add:"-3" }} more items
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="summary-row">
+                    <span>Subtotal</span>
+                    <span>₹{{ cart.total_price }}</span>
+                </div>
+                <div class="summary-row">
+                    <span>Shipping</span>
+                    <span class="text-success">Free</span>
+                </div>
+
+                <div class="summary-row total">
+                    <span>Total To Pay</span>
+                    <span>₹{{ cart.total_price }}</span>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-checkout">
+                    Confirm Order <i class="fas fa-check-circle"></i>
+                </button>
+
+                <div class="text-center mt-3">
+                    <span class="small text-muted"><i class="fas fa-lock"></i> Secure Transaction</span>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<script>
+    // Simple script to toggle selected class on payment options
+    document.querySelectorAll('input[name="payment_method"]').forEach(input => {
+        input.addEventListener('change', function () {
+            document.querySelectorAll('.payment-option-card').forEach(card => card.classList.remove('selected'));
+            if (this.checked) {
+                this.closest('.payment-option-card').classList.add('selected');
+            }
+        });
+    });
+</script>
+{% endblock %}

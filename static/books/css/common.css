@@ -108,53 +108,10 @@ img {
 }
 
 /* Animations */
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
+/* Animation Removed */
 
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
 
-@keyframes scaleIn {
-    from {
-        opacity: 0;
-        transform: scale(0.9);
-    }
-
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-
-@keyframes float {
-    0% {
-        transform: translateY(0px);
-    }
-
-    50% {
-        transform: translateY(-10px);
-    }
-
-    100% {
-        transform: translateY(0px);
-    }
-}
-
-.animate-fade-up {
-    /* animation: fadeInUp 0.8s ...  - Moved to JS control for clearer loading */
-    /* opacity: 0; REMOVE: Let JS handle hiding to prevent blank page on error */
-}
-
-.hover-float:hover {
-    transform: translateY(-8px);
-    box-shadow: var(--shadow-lg);
-}
+/* Animations Removed */
 
 /* Navbar (Modern Floating Pill) */
 .navbar {
@@ -367,6 +324,7 @@ h3 {
 .text-gradient {
     background: linear-gradient(to right, var(--primary-color), var(--accent-color));
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
@@ -712,9 +670,10 @@ h3 {
 }
 
 /* Hover effects removed for mobile stability */
+/* Hover effect removed to stop movement */
 .book-card:hover {
     border-color: #cbd5e1;
-    box-shadow: var(--shadow-md);
+    /* box-shadow left as is or removed if causing jump */
 }
 
 .book-image {
@@ -739,10 +698,22 @@ h3 {
 }
 
 .book-image img {
-    width: 100%;
-    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
     object-fit: contain;
     display: block;
+    margin: 0 auto;
+}
+
+/* Fix for anchor tag not filling height */
+.book-image a {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
 }
 
 /* Overlay Removed */
@@ -838,3 +809,18 @@ h3 {
     margin-top: auto;
     border-radius: 12px;
 }
+/* Navbar Badge */
+.nav-links li a { position: relative; }
+.icon-badge {
+    position: absolute;
+    top: -8px; right: -8px;
+    background: var(--danger);
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 700;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    border: 2px solid #fff;
+}
+

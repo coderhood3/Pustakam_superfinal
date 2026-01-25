@@ -1,0 +1,88 @@
+{% extends 'books/base.html' %}
+{% load static %}
+
+{% block title %}Scan Book | Pustakam{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'books/css/scan.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container section-padding">
+    <div class="scan-container">
+        <div class="scan-header">
+            <h1><i class="fas fa-qrcode"></i> Scan ISBN</h1>
+            <p>Point your camera at the book's barcode to search.</p>
+        </div>
+
+        <div id="reader"></div>
+        <p class="scan-status" id="scan-status">Waiting for permissions...</p>
+
+        <form action="{% url 'home' %}" method="GET" id="scan-form">
+            <input type="hidden" name="q" id="scan-input">
+        </form>
+
+        <div class="manual-entry">
+            <p>Trouble scanning?</p>
+            <a href="{% url 'home' %}" class="btn btn-outline">Search Manually</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const statusText = document.getElementById('scan-status');
+        const searchInput = document.getElementById('scan-input');
+        const searchForm = document.getElementById('scan-form');
+        let html5QrcodeScanner = null;
+
+        function onScanSuccess(decodedText, decodedResult) {
+            console.log(`Code matched = ${decodedText}`, decodedResult);
+            statusText.innerText = "Match Found! Redirecting...";
+            statusText.style.color = "var(--success)";
+
+            searchInput.value = decodedText;
+
+            if (html5QrcodeScanner) {
+                html5QrcodeScanner.clear().then(() => {
+                    searchForm.submit();
+                }).catch(err => {
+                    searchForm.submit();
+                });
+            } else {
+                searchForm.submit();
+            }
+        }
+
+        function onScanFailure(error) {
+            // quiet
+        }
+
+        function startScanner() {
+            // Check for Secure Context
+            if (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
+                statusText.innerText = "Error: Camera access requires HTTPS.";
+                statusText.style.color = "var(--danger)";
+                return;
+            }
+
+            try {
+                html5QrcodeScanner = new Html5QrcodeScanner(
+                    "reader",
+                    { fps: 10, qrbox: { width: 250, height: 250 } },
+                    /* verbose= */ false);
+                html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+                statusText.innerText = "Scanning active...";
+            } catch (err) {
+                statusText.innerText = "Error starting scanner: " + err;
+                statusText.style.color = "var(--danger)";
+            }
+        }
+
+        startScanner();
+    });
+</script>
+{% endblock %}

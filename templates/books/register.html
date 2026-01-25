@@ -24,17 +24,25 @@
                 </div>
                 {% endfor %}
 
+                <!-- First Name & Last Name -->
                 <div class="d-flex" style="gap: 1rem;">
                     <div class="form-group input-with-icon" style="flex: 1;">
                         <input type="text" name="first_name" placeholder="First Name" required id="id_first_name">
                         <i class="fas fa-user"></i>
+                        {% if form.first_name.errors %}
+                        <div class="error-msg small text-danger">{{ form.first_name.errors.0 }}</div>
+                        {% endif %}
                     </div>
                     <div class="form-group input-with-icon" style="flex: 1;">
                         <input type="text" name="last_name" placeholder="Last Name" required id="id_last_name">
                         <i class="fas fa-user"></i>
+                        {% if form.last_name.errors %}
+                        <div class="error-msg small text-danger">{{ form.last_name.errors.0 }}</div>
+                        {% endif %}
                     </div>
                 </div>
 
+                <!-- Email -->
                 <div class="form-group">
                     <div class="input-with-icon">
                         <input type="email" name="email" placeholder="Email Address" required id="id_email">
@@ -45,24 +53,42 @@
                     {% endif %}
                 </div>
 
-                <!-- Iterate over remaining fields (passwords) usually usually declared fields in UserCreationForm -->
-                {% for field in form %}
-                {% if field.name != 'first_name' and field.name != 'last_name' and field.name != 'email' %}
+                <!-- Password 1 -->
                 <div class="form-group">
                     <div class="input-with-icon">
-                        <input type="{{ field.field.widget.input_type }}" name="{{ field.name }}"
-                            placeholder="{{ field.label }}" id="{{ field.id_for_label }}">
+                        <input type="password" name="password1" placeholder="Password" required id="id_password1">
                         <i class="fas fa-lock"></i>
+                        <i class="fas fa-eye toggle-password" data-target="id_password1"
+                            style="right: 15px; top: 50%; transform: translateY(-50%); color: #64748b; pointer-events: auto; cursor: pointer;"></i>
                     </div>
-                    {% if field.help_text %}
-                    <div class="text-muted mt-1 small" style="font-size:0.75rem">{{ field.help_text|safe }}</div>
+                    <div class="strength-meter">
+                        <div class="strength-bar" id="strength-bar"></div>
+                    </div>
+                    <small id="strength-text">Weak</small>
+
+                    {% if form.password1.help_text %}
+                    <div class="text-muted mt-1 small" style="font-size:0.75rem">{{ form.password1.help_text|safe }}
+                    </div>
                     {% endif %}
-                    {% if field.errors %}
-                    <div class="error-msg small text-danger">{{ field.errors.0 }}</div>
+
+                    {% if form.password1.errors %}
+                    <div class="error-msg small text-danger">{{ form.password1.errors.0 }}</div>
                     {% endif %}
                 </div>
-                {% endif %}
-                {% endfor %}
+
+                <!-- Password 2 -->
+                <div class="form-group">
+                    <div class="input-with-icon">
+                        <input type="password" name="password2" placeholder="Confirm Password" required
+                            id="id_password2">
+                        <i class="fas fa-lock"></i>
+                        <i class="fas fa-eye toggle-password" data-target="id_password2"
+                            style="right: 15px; top: 50%; transform: translateY(-50%); color: #64748b; pointer-events: auto; cursor: pointer;"></i>
+                    </div>
+                    {% if form.password2.errors %}
+                    <div class="error-msg small text-danger">{{ form.password2.errors.0 }}</div>
+                    {% endif %}
+                </div>
 
                 <div class="form-group">
                     <label class="small text-muted terms-label">

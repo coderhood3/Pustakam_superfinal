@@ -18,22 +18,29 @@
             <form method="post">
                 {% csrf_token %}
 
-                {% if messages %}
-                {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} mb-3 small">
-                    {{ message }}
-                </div>
-                {% endfor %}
-                {% endif %}
+                <!-- Messages handled by SweetAlert in base.html, keeping fallback just in case -->
 
                 <div class="form-group input-with-icon">
                     <input type="text" name="username" id="username" placeholder="Username or Email" required>
                     <i class="fas fa-user"></i>
                 </div>
 
-                <div class="form-group input-with-icon">
+                <div class="form-group input-with-icon password-group">
                     <input type="password" name="password" id="password" placeholder="Password" required>
                     <i class="fas fa-lock"></i>
+                    <i class="fas fa-eye toggle-password" data-target="password"
+                        style="right: 15px; top: 50%; transform: translateY(-50%); color: #64748b; pointer-events: auto; cursor: pointer;"></i>
+                </div>
+
+                <div class="form-group d-flex justify-content-between align-items-center mb-4"
+                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <label class="terms-label"
+                        style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                        <input type="checkbox" name="remember_me">
+                        <span class="small text-muted">Remember Me</span>
+                    </label>
+                    <a href="{% url 'forgot_password' %}" class="small text-primary"
+                        style="color: var(--primary-color); font-weight: 600;">Forgot Password?</a>
                 </div>
 
                 <button type="submit" class="btn-auth">Login</button>
@@ -54,11 +61,8 @@
     </div>
 </div>
 
-<script>
-    // Optional: Auto-focus first input
-    document.addEventListener("DOMContentLoaded", function () {
-        const input = document.getElementById('username');
-        if (input) input.focus();
-    });
-</script>
+{% block extra_js %}
+<script src="{% static 'books/js/auth.js' %}"></script>
+{% endblock %}
+
 {% endblock %}

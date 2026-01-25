@@ -12,15 +12,15 @@
 <section class="hero">
     <div class="container hero-container">
         <div class="hero-content">
-            <h1 class="fade-in">Discover Worlds in <span class="highlight">Reused Books</span></h1>
-            <p class="fade-in-delay">Buy and sell pre-loved books at affordable prices. Sustainable reading starts here.
+            <h1>Discover Worlds in <span class="highlight">Reused Books</span></h1>
+            <p>Buy and sell pre-loved books at affordable prices. Sustainable reading starts here.
             </p>
-            <div class="hero-buttons fade-in-delay-2">
+            <div class="hero-buttons">
                 <a href="#featured" class="btn btn-primary btn-lg">Shop Now</a>
                 <a href="{% url 'upload_book' %}" class="btn btn-outline btn-lg">Sell Books</a>
             </div>
         </div>
-        <div class="hero-image fade-in-right">
+        <div class="hero-image">
             <img src="{% static 'books/images/hero-book.svg' %}" alt="Flying Books" class="floating-book-img">
         </div>
     </div>
@@ -32,7 +32,7 @@
         <h2 class="section-title">Explore Categories</h2>
         <div class="category-grid">
             {% for category in categories %}
-            <a href="{% url 'category_books' category.pk %}" class="category-card hover-lift">
+            <a href="{% url 'category_books' category.pk %}" class="category-card">
                 <div class="category-icon">
                     {% if category.image %}
                     <img src="{{ category.image.url }}" alt="{{ category.name }}">
@@ -59,7 +59,7 @@
         {% endif %}
         <div class="book-grid">
             {% for book in featured_books %}
-            <div class="book-card hover-lift">
+            <div class="book-card">
                 <div class="book-image">
                     <a href="{% url 'book_detail' book.pk %}">
                         {% if book.image %}

@@ -6,9 +6,12 @@ from django.contrib.auth import login, authenticate
 from django.core.mail import send_mail
 from django.conf import settings
 import random
-from .models import Book, Category, Cart, CartItem, Order, OrderItem, Review, Wishlist, BookImage
+from .models import Book, Category, Cart, CartItem, Order, OrderItem, Review, Wishlist, BookImage, UserProfile
 from .forms import RegistrationForm, BookForm, ReviewForm
 from .signals import send_seller_order_emails
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth import get_user_model
 
 def register(request):
     if request.method == 'POST':
@@ -44,10 +47,16 @@ def login_view(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
+        remember_me = request.POST.get('remember_me')
+        
         user = authenticate(request, username=username, password=password)
         
         if user is not None:
              login(request, user)
+             if not remember_me:
+                 request.session.set_expiry(0) # Expire on browser close
+             # else: default is 2 weeks (Django settings)
+                 
              messages.success(request, f'Welcome back, {user.username}!')
              return redirect('home')
         else:
@@ -149,7 +158,11 @@ def book_detail(request, pk):
         form = ReviewForm()
     
     images = book.images.all()
-    return render(request, 'books/book_detail.html', {'book': book, 'reviews': reviews, 'form': form, 'images': images})
+    
+    # Related Books Logic (Same Category, exclude current)
+    related_books = Book.objects.filter(category=book.category, status='Published').exclude(id=book.id)[:4]
+    
+    return render(request, 'books/book_detail.html', {'book': book, 'reviews': reviews, 'form': form, 'images': images, 'related_books': related_books})
 
 @login_required
 def upload_book(request):
@@ -242,3 +255,154 @@ def add_to_wishlist(request, book_id):
     wishlist.books.add(book)
     messages.success(request, 'Added to wishlist!')
     return redirect('wishlist')
+
+def forgot_password(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        User = get_user_model()
+        try:
+            user = User.objects.get(email=email)
+            # Generate OTP
+            otp = str(random.randint(100000, 999999))
+            request.session['reset_user_id'] = user.id
+            request.session['reset_otp'] = otp
+            
+            # Send Email
+            send_mail(
+                'Reset Your Password - Pustakam',
+                f'Hello {user.username},\n\nYour OTP for password reset is: {otp}\n\n',
+                settings.EMAIL_HOST_USER if hasattr(settings, 'EMAIL_HOST_USER') else 'noreply@pustakam.com',
+                [user.email],
+                fail_silently=False,
+            )
+            messages.success(request, f'OTP sent to {email}.')
+            return redirect('verify_reset_otp')
+        except User.DoesNotExist:
+            messages.error(request, 'No account found with this email.')
+    
+    return render(request, 'books/forgot_password.html')
+
+def verify_reset_otp(request):
+    if 'reset_user_id' not in request.session:
+        messages.error(request, 'Session expired.')
+        return redirect('forgot_password')
+        
+    if request.method == 'POST':
+        entered_otp = request.POST.get('otp')
+        session_otp = request.session.get('reset_otp')
+        
+        if entered_otp == session_otp:
+            # Verified
+            request.session['reset_verified'] = True
+            del request.session['reset_otp'] # Clear OTP but keep user_id
+            return redirect('reset_password')
+        else:
+            messages.error(request, 'Invalid OTP.')
+            
+    return render(request, 'books/verify_reset_otp.html')
+
+def reset_password(request):
+    if not request.session.get('reset_verified'):
+        return redirect('forgot_password')
+        
+    if request.method == 'POST':
+        password = request.POST.get('password')
+        confirm_password = request.POST.get('confirm_password')
+        
+        if password == confirm_password:
+            User = get_user_model()
+            user_id = request.session.get('reset_user_id')
+            user = User.objects.get(pk=user_id)
+            user.set_password(password)
+            user.save()
+            
+            # Cleanup
+            del request.session['reset_user_id']
+            del request.session['reset_verified']
+            
+            messages.success(request, 'Password reset successful! Please login.')
+            return redirect('login')
+        else:
+            messages.error(request, 'Passwords do not match.')
+            
+    return render(request, 'books/reset_password.html')
+
+def resend_otp(request, flow):
+    # flow can be 'register' or 'reset'
+    User = get_user_model()
+    otp = str(random.randint(100000, 999999))
+    email = None
+    
+    if flow == 'register':
+        user_id = request.session.get('pre_otp_user_id')
+        if user_id:
+            user = User.objects.get(pk=user_id)
+            email = user.email
+            request.session['otp'] = otp
+            subject = 'Resend Registration OTP - Pustakam'
+    elif flow == 'reset':
+        user_id = request.session.get('reset_user_id')
+        if user_id:
+            user = User.objects.get(pk=user_id)
+            email = user.email
+            request.session['reset_otp'] = otp
+            subject = 'Resend Password Reset OTP - Pustakam'
+            
+    if email:
+        send_mail(
+            subject,
+            f'Your new OTP is: {otp}',
+            settings.EMAIL_HOST_USER if hasattr(settings, 'EMAIL_HOST_USER') else 'noreply@pustakam.com',
+            [email],
+            fail_silently=False,
+        )
+        messages.success(request, 'OTP Resent!')
+    else:
+        messages.error(request, 'Cannot resend OTP. Session expired.')
+        
+    return redirect('verify_otp' if flow == 'register' else 'verify_reset_otp')
+
+@login_required
+def change_password(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)  # Important!
+            messages.success(request, 'Your password was successfully updated!')
+            return redirect('profile')
+        else:
+            messages.error(request, 'Please correct the error below.')
+    else:
+        form = PasswordChangeForm(request.user)
+    return render(request, 'books/change_password.html', {'form': form})
+
+@login_required
+def profile_view(request):
+    user_profile, created = UserProfile.objects.get_or_create(user=request.user)
+    orders = request.user.orders.all().order_by('-created_at')
+    return render(request, 'books/profile.html', {
+        'profile': user_profile,
+        'orders': orders
+    })
+
+@login_required
+def edit_profile(request):
+    user_profile, created = UserProfile.objects.get_or_create(user=request.user)
+    if request.method == 'POST':
+        # User fields
+        request.user.first_name = request.POST.get('first_name')
+        request.user.last_name = request.POST.get('last_name')
+        request.user.save()
+        
+        # Profile fields
+        user_profile.phone_number = request.POST.get('phone_number')
+        user_profile.address = request.POST.get('address')
+        if 'avatar' in request.FILES:
+            user_profile.avatar = request.FILES['avatar']
+        user_profile.save()
+        
+        messages.success(request, 'Profile updated!')
+        return redirect('profile')
+    
+    return render(request, 'books/edit_profile.html', {'profile': user_profile})

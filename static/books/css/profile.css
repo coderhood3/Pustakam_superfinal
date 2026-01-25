@@ -1,0 +1,271 @@
+/* Profile Page Styles */
+.profile-container {
+    max-width: 1000px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+    min-height: 80vh;
+}
+
+/* --- Profile Header (Grid) --- */
+.profile-header {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+@media (max-width: 768px) {
+    .profile-header {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Common Card Style */
+.user-info-card,
+.address-card,
+.order-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.user-info-card:hover,
+.address-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+}
+
+/* User Info Card specific */
+.user-info-card {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+@media (max-width: 500px) {
+    .user-info-card {
+        flex-direction: column;
+        text-align: center;
+    }
+}
+
+.avatar-section {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.profile-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid white;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.avatar-placeholder {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    font-size: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    box-shadow: 0 8px 20px rgba(var(--primary-rgb), 0.3);
+}
+
+.info-details h2 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.8rem;
+    color: var(--text-dark);
+}
+
+.info-details p {
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+}
+
+.action-buttons {
+    margin-top: 1.5rem;
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+@media (max-width: 500px) {
+    .action-buttons {
+        justify-content: center;
+    }
+}
+
+/* Buttons */
+.btn-sm {
+    padding: 0.5rem 1.2rem;
+    font-size: 0.9rem;
+    border-radius: 50px;
+}
+
+.btn-secondary {
+    background: var(--light-bg);
+    color: var(--text-dark);
+    border: 1px solid #e2e8f0;
+}
+
+.btn-secondary:hover {
+    background: #e2e8f0;
+}
+
+.btn-outline {
+    border: 1px solid var(--primary-color);
+    color: var(--primary-color);
+    background: transparent;
+}
+
+.btn-outline:hover {
+    background: var(--primary-color);
+    color: white;
+}
+
+/* Address Card */
+.address-card h3 {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    border-bottom: 2px solid var(--accent-color);
+    display: inline-block;
+    padding-bottom: 0.2rem;
+}
+
+/* --- Orders Section --- */
+.orders-section h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    color: var(--text-dark);
+}
+
+.orders-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.order-card {
+    padding: 0;
+    /* Reset padding for internal structure */
+    overflow: hidden;
+}
+
+.order-header {
+    background: #f8fafc;
+    padding: 1rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #edf2f7;
+    font-weight: 500;
+}
+
+.order-total {
+    font-weight: 700;
+    color: var(--primary-color);
+    font-size: 1.1rem;
+}
+
+@media (max-width: 500px) {
+    .order-header {
+        flex-direction: column;
+        gap: 0.5rem;
+        align-items: flex-start;
+    }
+}
+
+/* Tracking Bar */
+.tracking-track {
+    padding: 2rem 1.5rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+}
+
+.tracking-track .step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+    color: #cbd5e1;
+    transition: all 0.4s ease;
+}
+
+.tracking-track .step i {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    background: white;
+    padding: 0 0.5rem;
+}
+
+.tracking-track .step small {
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.tracking-track .step.active {
+    color: #10b981;
+    /* Success Green */
+    transform: scale(1.1);
+}
+
+.tracking-track .line {
+    flex: 1;
+    height: 3px;
+    background: #e2e8f0;
+    position: relative;
+    top: -12px;
+    /* Align with icon center approximately */
+    z-index: 1;
+    margin: 0 -10px;
+    /* Overlap slightly */
+}
+
+.tracking-track .line.active {
+    background: #10b981;
+}
+
+/* Order Items */
+.order-items {
+    padding: 1rem 1.5rem 1.5rem;
+}
+
+.item-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.8rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.item-row:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.tiny-cover {
+    width: 50px;
+    height: 70px;
+    border-radius: 4px;
+    object-fit: cover;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.item-row span {
+    font-weight: 500;
+    color: var(--text-dark);
+}

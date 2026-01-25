@@ -296,3 +296,33 @@
         display: none;
     }
 }
+/* Profile Dashboard */
+.profile-container { max-width: 1000px; margin: 40px auto; }
+.profile-header { display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; margin-bottom: 3rem; }
+
+.user-info-card, .address-card {
+    background: #fff; border-radius: 20px; padding: 2rem;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border: 1px solid #f1f5f9;
+}
+.user-info-card { display: flex; align-items: center; gap: 2rem; }
+.avatar-section img { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; }
+.avatar-placeholder {
+    width: 100px; height: 100px; border-radius: 50%; background: var(--primary-color);
+    color: white; font-size: 2.5rem; display: flex; align-items: center; justify-content: center;
+}
+.info-details h2 { margin-bottom: 0.5rem; }
+.action-buttons { margin-top: 1rem; display: flex; gap: 1rem; }
+
+/* Order Tracking */
+.order-card { background: #fff; border-radius: 16px; border: 1px solid #e2e8f0; padding: 1.5rem; margin-bottom: 1.5rem; }
+.order-header { display: flex; justify-content: space-between; margin-bottom: 1.5rem; font-weight: 500; border-bottom: 1px solid #f1f5f9; padding-bottom: 1rem; }
+.tracking-track { display: flex; align-items: center; justify-content: space-between; margin: 2rem 0; position: relative; }
+.step { text-align: center; color: #cbd5e1; z-index: 2; background: #fff; padding: 0 10px; }
+.step i { font-size: 1.5rem; display: block; margin-bottom: 0.5rem; }
+.step.active { color: var(--success); }
+.line { flex: 1; height: 3px; background: #e2e8f0; margin: 0 -10px; z-index: 1; margin-bottom: 18px; }
+.line.active { background: var(--success); }
+.order-items { background: #f8fafc; padding: 1rem; border-radius: 12px; }
+.item-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem; font-size: 0.9rem; }
+.tiny-cover { width: 30px; height: 45px; object-fit: cover; border-radius: 4px; }
+

@@ -1,0 +1,154 @@
+{% extends 'books/base.html' %}
+{% load static %}
+
+{% block title %}My Uploads | Pustakam{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'books/css/dashboard.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container section-padding">
+
+    <div class="dashboard-container">
+        <!-- Header -->
+        <div class="dashboard-header animate-fade-up">
+            <div>
+                <h1>My Bookshelf</h1>
+                <p class="text-muted">Manage your uploaded books and track their status.</p>
+            </div>
+            <a href="{% url 'upload_book' %}" class="btn btn-primary">
+                <i class="fas fa-plus-circle"></i> Sell New Book
+            </a>
+        </div>
+
+        {% if books %}
+        <div class="listings-container animate-fade-up">
+
+            <!-- Desktop Table View -->
+            <div class="table-wrapper">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th>Book Details</th>
+                            <th>Price</th>
+                            <th>Status</th>
+                            <th>Uploaded Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for book in books %}
+                        <tr>
+                            <td>
+                                <div class="book-info-cell">
+                                    {% if book.image %}
+                                    <img src="{{ book.image.url }}" alt="{{ book.title }}" class="book-thumb">
+                                    {% else %}
+                                    <div class="book-thumb-placeholder">
+                                        <i class="fas fa-book"></i>
+                                    </div>
+                                    {% endif %}
+                                    <div class="book-details">
+                                        <h3>{{ book.title }}</h3>
+                                        <span class="author">by {{ book.author }}</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="price-tag">₹{{ book.price }}</span>
+                            </td>
+                            <td>
+                                {% if book.status == 'Priced' %}
+                                <form action="{% url 'approve_price' book.pk %}" method="post" style="display:inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-success" title="Approve Price">
+                                        <i class="fas fa-check"></i> Approve
+                                    </button>
+                                </form>
+                                {% endif %}
+
+                                <span class="status-badge status-{{ book.status|lower }}">
+                                    {% if book.status == 'Published' %}
+                                    <i class="fas fa-check-circle"></i>
+                                    {% elif book.status == 'Pending' %}
+                                    <i class="fas fa-clock"></i>
+                                    {% elif book.status == 'Priced' %}
+                                    <i class="fas fa-tag"></i>
+                                    {% elif book.status == 'Rejected' %}
+                                    <i class="fas fa-times-circle"></i>
+                                    {% endif %}
+                                    {{ book.status }}
+                                </span>
+                            </td>
+                            <td class="text-muted">
+                                {{ book.created_at|date:"M d, Y" }}
+                            </td>
+                            <td>
+                                <div class="d-flex gap-2">
+                                    <a href="{% url 'book_detail' book.pk %}" class="action-btn" title="View">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <!-- Add Edit/Delete buttons if backend supports them later -->
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Mobile Card View -->
+            <div class="mobile-cards p-3">
+                {% for book in books %}
+                <div class="mobile-card">
+                    {% if book.image %}
+                    <img src="{{ book.image.url }}" alt="{{ book.title }}" class="book-thumb">
+                    {% else %}
+                    <div class="book-thumb-placeholder" style="width: 80px; height: 120px;">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    {% endif %}
+
+                    <div class="mobile-card-content">
+                        <div class="mobile-card-header">
+                            <div class="book-details">
+                                <h3>{{ book.title }}</h3>
+                                <span class="author">{{ book.author }}</span>
+                            </div>
+                            <!-- Future: 3-dot menu -->
+                        </div>
+
+                        <div class="mb-2">
+                            <span class="status-badge status-{{ book.status|lower }}" style="font-size: 0.7rem;">
+                                {{ book.status }}
+                            </span>
+                        </div>
+
+                        <div class="mobile-card-footer">
+                            <span class="price-tag">₹{{ book.price }}</span>
+                            <a href="{% url 'book_detail' book.pk %}" class="btn btn-outline btn-sm">View</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+        </div>
+        {% else %}
+        <!-- Empty State -->
+        <div class="empty-state animate-fade-up">
+            <div class="empty-icon">
+                <i class="fas fa-box-open"></i>
+            </div>
+            <h3>Your bookshelf is empty</h3>
+            <p>You haven't uploaded any books yet. Clear some space on your shelf and earn money!</p>
+            <a href="{% url 'upload_book' %}" class="btn btn-primary btn-lg">
+                Start Selling Today
+            </a>
+        </div>
+        {% endif %}
+
+    </div>
+</div>
+{% endblock %}

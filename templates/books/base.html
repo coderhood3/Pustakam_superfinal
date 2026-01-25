@@ -18,6 +18,7 @@
 
     <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body>
@@ -45,14 +46,25 @@
             <ul class="nav-links">
                 <li><a href="{% url 'home' %}">Home</a></li>
                 {% if user.is_authenticated %}
-                <li><a href="{% url 'wishlist' %}"><i class="fas fa-heart"></i></a></li>
-                <li><a href="{% url 'cart' %}"><i class="fas fa-shopping-cart"></i></a></li>
+                <li>
+                    <a href="{% url 'wishlist' %}">
+                        <i class="fas fa-heart"></i>
+                        {% if wishlist_count > 0 %} <span class="icon-badge">{{ wishlist_count }}</span> {% endif %}
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'cart' %}">
+                        <i class="fas fa-shopping-cart"></i>
+                        {% if cart_count > 0 %} <span class="icon-badge">{{ cart_count }}</span> {% endif %}
+                    </a>
+                </li>
                 <li class="dropdown">
                     <a href="#" class="dropbtn">Hi, {{ user.first_name }} <i class="fas fa-caret-down"></i></a>
                     <div class="dropdown-content">
+                        <a href="{% url 'profile' %}">My Profile</a>
                         <a href="{% url 'my_books' %}">My Uploads</a>
                         <a href="{% url 'upload_book' %}">Sell Book</a>
-                        <a href="#">Orders</a> <!-- TODO -->
+                        <a href="{% url 'profile' %}#orders">Orders</a>
                         <form action="{% url 'logout' %}" method="post" id="logout-form">
                             {% csrf_token %}
                             <button type="submit" class="logout-btn">Logout</button>
@@ -78,14 +90,31 @@
     </script>
 
     <main class="main-content">
+
+        <!-- Toast Notifications handled by SweetAlert2 -->
         {% if messages %}
-        <div class="messages-container">
-            {% for message in messages %}
-            <div class="alert alert-{{ message.tags }}">
-                {{ message }}
-            </div>
-            {% endfor %}
-        </div>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.addEventListener('mouseenter', Swal.stopTimer)
+                        toast.addEventListener('mouseleave', Swal.resumeTimer)
+                    }
+                });
+
+                {% for message in messages %}
+                Toast.fire({
+                    icon: "{% if message.tags == 'error' %}error{% else %}success{% endif %}",
+                    title: "{{ message }}"
+                });
+                {% endfor %}
+            });
+        </script>
         {% endif %}
 
         {% block content %}{% endblock %}

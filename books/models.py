@@ -116,3 +116,13 @@ class OrderItem(models.Model):
 
     def __str__(self):
         return f"{self.quantity} x {self.book.title} in Order #{self.order.id}"
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
+    phone_number = models.CharField(max_length=15, blank=True)
+    address = models.TextField(blank=True, help_text="Default shipping address")
+    avatar = models.ImageField(upload_to='avatars/', default='avatars/default.png')
+
+    def __str__(self):
+        return f"Profile of {self.user.username}"
+

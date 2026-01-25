@@ -1,0 +1,27 @@
+{% extends 'books/base.html' %}
+{% block title %}Verify OTP{% endblock %}
+
+{% block content %}
+<div class="container auth-container">
+    <div class="auth-card">
+        <h2>Verify OTP</h2>
+        <p>Enter the code sent to your email.</p>
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <input type="text" name="otp" required class="form-control text-center" placeholder="######"
+                    maxlength="6" style="letter-spacing: 5px; font-size: 1.5rem;">
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Verify</button>
+        </form>
+        <div class="resend-container mt-3 text-center">
+            <p id="timer-msg">Resend in <span id="timer">30</span>s</p>
+            <a href="{% url 'resend_otp' 'reset' %}" id="resend-link" class="disabled-link">Resend OTP</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'books/js/auth.js' %}"></script>
+{% endblock %}

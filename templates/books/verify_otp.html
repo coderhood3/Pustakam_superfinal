@@ -1,7 +1,6 @@
 {% extends 'books/base.html' %}
 {% load static %}
-
-{% block title %}Verify OTP | Pustakam{% endblock %}
+{% block title %}Verify Verification | Pustakam{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'books/css/auth.css' %}">
@@ -17,25 +16,17 @@
 
             <form method="post">
                 {% csrf_token %}
-                {% if messages %}
-                {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} mb-3 small">
-                    {{ message }}
+                <div class="form-group">
+                    <input type="text" name="otp" required class="form-control text-center" placeholder="######"
+                        maxlength="6" style="letter-spacing: 5px; font-size: 1.5rem; text-align: center;">
                 </div>
-                {% endfor %}
-                {% endif %}
-
-                <div class="form-group input-with-icon">
-                    <input type="text" name="otp" placeholder="Enter 6-digit OTP" maxlength="6" required autofocus
-                        pattern="[0-9]{6}" title="6-digit code">
-                    <i class="fas fa-key"></i>
-                </div>
-
                 <button type="submit" class="btn-auth">Verify & Login</button>
             </form>
 
-            <div class="auth-footer">
-                Did not receive the code? <a href="{% url 'register' %}">Resend</a>
+            <div class="resend-container mt-3 text-center" style="margin-top: 1rem; text-align: center;">
+                <p id="timer-msg" class="text-muted small">Resend in <span id="timer">30</span>s</p>
+                <a href="{% url 'resend_otp' 'register' %}" id="resend-link" class="disabled-link"
+                    style="font-weight: 600;">Resend OTP</a>
             </div>
         </div>
 
@@ -48,4 +39,8 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'books/js/auth.js' %}"></script>
 {% endblock %}

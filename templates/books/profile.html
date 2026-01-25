@@ -1,0 +1,141 @@
+{% extends 'books/base.html' %}
+{% load static %}
+{% block title %}My Profile{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'books/css/profile.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container profile-container">
+    <div class="profile-header">
+        <div class="user-info-card">
+            <div class="avatar-section">
+                {% if profile.avatar %}
+                <img src="{{ profile.avatar.url }}" alt="Profile" class="profile-avatar">
+                {% else %}
+                <div class="avatar-placeholder">{{ user.first_name|first }}</div>
+                {% endif %}
+            </div>
+            <div class="info-details">
+                <h2>{{ user.first_name }} {{ user.last_name }}</h2>
+                <p class="text-muted">{{ user.email }}</p>
+                <p><strong>Phone:</strong> {{ profile.phone_number|default:"Not set" }}</p>
+                <div class="action-buttons">
+                    <a href="{% url 'edit_profile' %}" class="btn btn-secondary btn-sm">Edit Profile</a>
+                    <a href="{% url 'change_password' %}" class="btn btn-outline btn-sm">Change Password</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="address-card">
+            <h3>Saved Address</h3>
+            {% if profile.address %}
+            <p>{{ profile.address|linebreaks }}</p>
+            {% else %}
+            <p class="text-muted">No address saved.</p>
+            <a href="{% url 'edit_profile' %}" class="link">Add Address</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="orders-section mt-5" id="orders">
+        <h3>Recent Orders</h3>
+        {% if orders %}
+        <div class="orders-list">
+            {% for order in orders %}
+            <div class="order-card fade-in-up" style="animation-delay: {{ forloop.counter0|add:1 }}00ms;">
+                <div class="order-header">
+                    <span><strong>Order #{{ order.id }}</strong></span>
+                    <span class="order-date">{{ order.created_at|date:"M d, Y" }}</span>
+                    <span class="order-total">₹{{ order.total_amount }}</span>
+                </div>
+
+                <!-- Tracking Status Bar -->
+                <div class="tracking-track">
+                    <div
+                        class="step {% if order.status == 'Pending' or order.status == 'Confirmed' or order.status == 'Shipped' or order.status == 'Delivered' %}active{% endif %}">
+                        <i class="fas fa-clipboard-check"></i>
+                        <small>Placed</small>
+                    </div>
+                    <div
+                        class="line {% if order.status == 'Shipped' or order.status == 'Delivered' %}active{% endif %}">
+                    </div>
+                    <div
+                        class="step {% if order.status == 'Shipped' or order.status == 'Delivered' %}active{% endif %}">
+                        <i class="fas fa-shipping-fast"></i>
+                        <small>Shipped</small>
+                    </div>
+                    <div class="line {% if order.status == 'Delivered' %}active{% endif %}"></div>
+                    <div class="step {% if order.status == 'Delivered' %}active{% endif %}">
+                        <i class="fas fa-box-open"></i>
+                        <small>Delivered</small>
+                    </div>
+                </div>
+
+                <div class="order-items">
+                    {% for item in order.items.all %}
+                    <div class="item-row">
+                        <img src="{{ item.book.image.url }}" alt="cover" class="tiny-cover">
+                        <span>{{ item.book.title }} (x{{ item.quantity }})</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p>No orders yet. <a href="{% url 'home' %}">Start shopping!</a></p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Optional: Add specialized interactions here
+        console.log('Profile loaded');
+
+        // Example: Copy address functionality if needed
+        const addressText = document.querySelector('.address-card p');
+        if (addressText) {
+            addressText.style.cursor = 'pointer';
+            addressText.title = 'Click to copy address';
+            addressText.addEventListener('click', () => {
+                navigator.clipboard.writeText(addressText.innerText).then(() => {
+                    const Toast = Swal.mixin({
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 2000
+                    });
+                    Toast.fire({
+                        icon: 'success',
+                        title: 'Address copied!'
+                    });
+                });
+            });
+        }
+    });
+</script>
+<style>
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .fade-in-up {
+        animation: fadeInUp 0.5s ease-out forwards;
+        opacity: 0;
+        /* meaningful start state */
+    }
+</style>
+{% endblock %}

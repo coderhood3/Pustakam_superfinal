@@ -192,3 +192,37 @@
         padding: 2.5rem;
     }
 }
+/* Password Toggle */
+.password-group { position: relative; }
+.toggle-password {
+    position: absolute;
+    right: 15px;
+    top: 38px; /* Adjust based on label height */
+    cursor: pointer;
+    color: var(--text-muted);
+}
+.toggle-password:hover { color: var(--primary-color); }
+
+/* Strength Meter */
+.strength-meter {
+    height: 4px;
+    background: #e2e8f0;
+    margin-top: 8px;
+    border-radius: 2px;
+    overflow: hidden;
+}
+.strength-bar {
+    height: 100%;
+    width: 0;
+    transition: width 0.3s, background-color 0.3s;
+}
+#strength-text {
+    font-size: 0.75rem;
+    margin-top: 4px;
+    display: block;
+    text-align: right;
+}
+
+/* Resend Timer */
+.disabled-link { pointer-events: none; opacity: 0.5; color: var(--text-muted); }
+

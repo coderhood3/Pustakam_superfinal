@@ -165,7 +165,8 @@ def create_document():
         ]), 
         ("CHAPTER 2: LITERATURE REVIEW", [
             ("2.1 Existing Systems", "Amazon: Focuses on new books.\nOLX: Generally unsafe and unorganized for books.\nLocal Stores: Low margins for sellers."),
-            ("2.2 Proposed System", "Pustakam focuses specifically on the academic community..."),
+        ("2.2 Proposed System", "Pustakam focuses specifically on the academic community. It allows students to buy and sell used textbooks directly within their college, eliminating middlemen and reducing costs."),
+            ("2.3 Advantages of Proposed System", "1. **Cost Effective:** Students get books at 40-60% lower prices.\n2. **Eco-Friendly:** Promotes reuse of paper, saving trees.\n3. **Curriculum Aligned:** Books are specific to the college syllabus.\n4. **Secure:** verified students exchange books within campus.\n5. **Fast:** No shipping delays as exchanges happen locally."),
         ]),
         ("CHAPTER 3: SYSTEM ANALYSIS", [
             ("3.1 Feasibility Study", "Detailed analysis of Technical, Economic, and Operational feasibility... Python is free... Django is secure..."),
@@ -188,7 +189,21 @@ def create_document():
              ("5.5 ER Diagram", "Entity relationships between User, Book, Order... \n[PASTE ER DIAGRAM IMAGE HERE]"),
         ]),
         ("CHAPTER 6: IMPLEMENTATION", [
-            ("6.1 Modules Description", "1. Authentication\n2. Book Management\n3. Cart System\n4. Order Processing"),
+            ("6.1 Modules Description", "1. **Authentication:** Handles Login/Register/OTP.\n2. **Book Management:** Sellers upload books, Admin approves/rejects.\n3. **Cart System:** Buyers add items, view total price.\n4. **Order Processing:** Checkout, Order ID generation, History.\n5. **Wishlist:** Save books for later."),
+            ("6.2 Book Upload & Management", "The book upload process involves a seller filling out a detailed form including Condition (New/Reused/Notes) and Price. \n- The system validates that the price is not higher than the original price.\n- Images are compressed and stored.\n- Admin verifies the listing before it goes live to maintain quality."),
+            ("6.3 Order & Exchange Process", "The order process is designed for simplicity:\n1. User adds books to cart.\n2. Proceed to checkout -> Enter Delivery Details.\n3. Order is placed with status 'Pending'.\n4. Seller receives notification.\n5. Seller delivers the book (in-person or campus drop).\n6. Status updated to 'Delivered'."),
+        ]),
+        ("CHAPTER 7: SYSTEM TESTING", [
+             ("7.1 Testing Types", "We performed several types of testing:\n\n**Unit Testing:** Testing individual functions (e.g., Price calculation).\n**Integration Testing:** Verifying Database and View connection.\n**System Testing:** Testing the complete flow from Login to Order.\n**UAT (User Acceptance Testing):** Feedback from peers."),
+             ("7.2 Test Cases", "1. Login with invalid password -> Error Message (Pass)\n2. Upload book with negative price -> Validation Error (Pass)\n3. Checkout with empty cart -> Redirect to Home (Pass)"),
+        ]),
+        ("CHAPTER 8: USER MANUAL", [
+             ("8.1 For Sellers", "1. Login -> Go to 'Sell Book'.\n2. Fill Details -> Upload.\n3. Wait for Approval.\n4. Check 'My Books' for status."),
+             ("8.2 For Buyers", "1. Search for book by Category or Name.\n2. Click 'Add to Cart'.\n3. Go to Checkout -> Confirm Order."),
+        ]),
+        ("CHAPTER 9: CONCLUSION & FUTURE SCOPE", [
+             ("9.1 Conclusion", "The 'Pustakam' Online Book Marketplace has been successfully designed and developed to address the specific needs of the student community. By facilitating the buying and selling of used textbooks within the campus, the platform effectively promotes a circular economy, reduces financial burdens on students, and contributes to environmental sustainability by minimizing paper waste.\n\nThe system's user-friendly interface, secure authentication, and role-based access control ensure a trustworthy environment for transactions. The integration of features like the Wishlist, Cart, and Admin verification adds significant value, making the process of finding and acquiring academic resources seamless and efficient. This project demonstrates the practical application of web development technologies to solve real-world problems faced by educational institutions."),
+             ("9.2 Future Scope", "To further enhance the platform's utility and user experience, the following features are proposed for future development:\n\n1. **Online Payment Integration:** Incorporating a secure payment gateway (e.g., Razorpay, Stripe) to allow for cashless transactions and support shipping options for inter-college exchanges.\n2. **Real-time Chat System:** Implementing a WebSocket-based chat feature to enable direct, real-time communication between buyers and sellers for negotiation and meetup coordination.\n3. **Mobile Application:** Developing a dedicated mobile app (using React Native or Flutter) to provide students with on-the-go access, push notifications for order updates, and camera integration for faster book uploads.\n4. **AI-Driven Recommendations:** Utilizing machine learning algorithms to recommend books to students based on their course, year of study, and previous search history.\n5. **Delivery Tracking System:** For orders involving shipping or campus drop-off points, a tracking system will be introduced to monitor the status of book delivery in real-time.\n6. **Social Login:** Enabling login via Google or Microsoft institutional accounts for quicker onboarding."),
         ]),
     ]
 
